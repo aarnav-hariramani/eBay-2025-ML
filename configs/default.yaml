@@ -1,0 +1,64 @@
+
+paths:
+  listings_tsv: "data/Listing_Titles.tsv"
+  train_tagged_tsv: "data/Tagged_Titles_Train.tsv"
+  work_dir: "outputs"
+  model_dir: "outputs/model"
+  submission_path: "outputs/submission.tsv"
+  gazetteers_dir: "outputs/gazetteers"
+
+data:
+  max_length: 128
+  val_split: 0.15
+  seed: 42
+  lowercase: false
+
+labels:
+  include: []
+
+training:
+  base_model_name: "xlm-roberta-base"
+  epochs: 6
+  batch_size: 16
+  lr: 3e-5
+  warmup_ratio: 0.1
+  weight_decay: 0.01
+  gradient_accumulation_steps: 1
+  fp16: true
+
+pseudo_labeling:
+  enabled: true
+  confidence_thresholds:
+    default: 0.92
+    Hersteller: 0.95
+    Produktart: 0.96
+    Kompatible_Fahrzeug_Marke: 0.96
+    Kompatibles_Fahrzeug_Modell: 0.97
+    Herstellernummer: 0.97
+    Oe/Oem_Referenznummer(N): 0.98
+    SAE_Viskosität: 0.99
+    Maßeinheit: 0.99
+  max_iterations: 2
+  sample_limit_per_iter: 150000
+
+inference:
+  proba_thresholds:
+    default: 0.55
+    Hersteller: 0.60
+    Produktart: 0.65
+    Kompatible_Fahrzeug_Marke: 0.65
+    Kompatibles_Fahrzeug_Modell: 0.70
+    Herstellernummer: 0.75
+    Oe/Oem_Referenznummer(N): 0.80
+    SAE_Viskosität: 0.85
+    Maßeinheit: 0.85
+
+rules:
+  enable_rules: true
+  enable_gazetteers: true
+  require_validator_for_model: false
+  require_model_for_gazetteer: false
+  merge_strategy: "union_then_validate"
+
+scoring:
+  beta: 0.2
